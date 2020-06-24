@@ -4,18 +4,19 @@ import (
 	"fmt"
 	"gin_vue_practice/model"
 	"github.com/jinzhu/gorm"
+	"github.com/spf13/viper"
 )
 
 var DB *gorm.DB
 
 func  InitDB() *gorm.DB {
-	driverName := "mysql"
-	host := "192.168.3.102"
-	port := "3306"
-	dbPasspword := "root"
-	dbUser := "root"
-	dbName := "gin_vue"
-	charset := "utf8"
+	driverName := viper.GetString("datasource.diverName")
+	host := viper.GetString("datasource.host")
+	port := viper.GetString("datasource.port")
+	dbUser := viper.GetString("datasource.username")
+	dbPasspword := viper.GetString("datasource.password")
+	dbName := viper.GetString("datasource.database")
+	charset := viper.GetString("datasource.charset")
 	args := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=true",
 		dbUser,
 		dbPasspword,
