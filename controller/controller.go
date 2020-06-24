@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"gin_vue_practice/utils"
 	"github.com/gin-gonic/gin"
 	"gin_vue_practice/common"
 	"gin_vue_practice/model"
@@ -26,11 +27,11 @@ func Register(ctx *gin.Context) {
 	}
 
 	if len(name) == 0 {
-		name = common.RandomString(6)
+		name = utils.RandomString(6)
 	}
 
 	// 手机号已经存在
-	if common.IsTelePhoneExist(DB, telephone) {
+	if utils.IsTelePhoneExist(DB, telephone) {
 		ctx.JSON(400, gin.H{"msg": "手机号已经存在"})
 		return
 	}
