@@ -3,8 +3,8 @@ package middleware
 import (
 	"gin_vue_practice/common"
 	"gin_vue_practice/model"
+	"gin_vue_practice/response"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -16,7 +16,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		// 验证token 格式
 		if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer") {
-			ctx.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": "未认证的请求"})
+			response.Response(ctx, http.StatusUnauthorized, 401, nil, "未认证的请求")
 			ctx.Abort()
 			return
 		}
@@ -24,10 +24,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		token, claims, err := common.ParseToken(tokenString)
 		if err != nil || ! token.Valid {
-			log.Println(err)
-			log.Println(token.Valid)
-
-			ctx.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg":"未认证"})
+			response.Response(ctx, http.StatusUnauthorized, 401, nil, "未认证的请求")
 			ctx.Abort()
 			return
 		}
@@ -36,10 +33,10 @@ func AuthMiddleware() gin.HandlerFunc {
 		userId := claims.UserId
 
 		DB := common.GetDB()
-		user := &model.User{}
+		user := model.User{}
 		DB.Where("id = ?", userId).First(&user) // or DB.First(&user, userId)
 		if user.ID == 0 {  // 用户不存在
-			ctx.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": "未认证"})
+			response.Response(ctx, http.StatusUnauthorized, 401, nil, "未认证的请求")
 			ctx.Abort()
 			return
 		}
