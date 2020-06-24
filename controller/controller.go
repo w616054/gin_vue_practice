@@ -1,11 +1,12 @@
 package controller
 
 import (
-	"gin_vue_practice/utils"
-	"github.com/gin-gonic/gin"
 	"gin_vue_practice/common"
 	"gin_vue_practice/model"
+	"gin_vue_practice/utils"
+	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"net/http"
 )
 
@@ -80,11 +81,26 @@ func Login(ctx *gin.Context) {
 	}
 
 	// 发功token
-	token := "11dasd"
+	token, err := common.RleaseToken(user)
+	if err != nil {
+		log.Println(err)
+		ctx.JSON(500, gin.H{"code": 500, "msg": "发放jwt错误"})
+		return
+	}
 
 	ctx.JSON(200, gin.H{
 		"code": 200,
 		"msg":  "登陆成功",
 		"data": gin.H{"token": token},
+	})
+}
+
+func Info(ctx *gin.Context)  {
+	user, _ := ctx.Get("user")
+
+	ctx.JSON(200, gin.H{"code": 200,
+		"data": gin.H{
+			"user": user,
+		},
 	})
 }
